@@ -1,5 +1,6 @@
 package fft;
 
+import java.util.Arrays;
 import java.util.Deque;
 
 public enum Song {
@@ -27,41 +28,42 @@ public enum Song {
 	
 //	public Song isSong(double amp, double avg, double pd) {
 	public static Song isSong(SimpleDanceRecord record) {
-//		Float[] z = (Float[]) record.zs.toArray();
-//		Float[] x = (Float[]) record.xs.toArray();		
-//		Float[] y = (Float[]) record.ys.toArray();
 		double[] zStats = record.getStats(0);
-		double ampZ = zStats[0];
-		double avgZ = zStats[1];
+		System.out.println("zStats: middle:" + zStats[0] + ", amp: " + zStats[1] + ", pd: " + zStats[2]);
+		double middleZ = zStats[0];
+		double ampZ = zStats[1];
 		double pdZ = zStats[2];
-		double[] xStats = record.getStats(1);		
-		double ampX = xStats[0];
-		double avgX = xStats[1];
+		double[] xStats = record.getStats(1);	
+		System.out.println("xStats: middle:" + xStats[0] + ", amp: " + xStats[1] + ", pd: " + xStats[2]);
+		double middleX = xStats[0];
+		double ampX = xStats[1];
 		double pdX = xStats[2];
-		double[] yStats = record.getStats(2);		
-		double ampY = yStats[0];
-		double avgY = yStats[1];
+		double[] yStats = record.getStats(2);	
+		System.out.println("yStats: middle:" + yStats[0] + ", amp: " + yStats[1] + ", pd: " + yStats[2]);
+		double middleY = yStats[0];
+		double ampY = yStats[1];
 		double pdY = yStats[2];
 		
-		if (((2.5 < ampZ) && (ampZ < 4.5)) && ((3 < avgZ) && (avgZ < 4)) && ((16 < pdZ) && (pdZ < 20))
-			&& ((ampX < 1)) && ((16 < pdX) && (pdX < 20))
-			&& ((ampY < 1)) && ((16 < pdY) && (pdY < 20)))
+		if (((3.5 > middleZ) && (3.22 < middleZ)) && ((2.6 > ampZ) && (2.0 < ampZ)) && ((15 < pdZ) && (19 > pdZ))
+			&& ((0.3 > middleX) && (0 < middleX)) && ((0.6 > ampX) && (0.3 < ampX)) && ((11 < pdX) && (14 > pdX))
+			&& ((1.8 > middleY) && (1.2 < middleY)) && ((0.9 > ampY) && (0.5 < ampY)) && ((15 < pdY) && (19 > pdY)))
 		{
 			return Song.SINGLE_LADIES;
 		}	
 		// TODO: modify these
-		else if (((2.5 < ampZ) && (ampZ < 4.5)) && ((3 < avgZ) && (avgZ < 4)) && ((16 < pdZ) && (pdZ < 20))
-				&& ((ampZ < 1)) && ((16 < pdZ) && (pdZ < 20))
-				&& ((ampZ < 1)) && ((16 < pdZ) && (pdZ < 20)))
-		{
-			return Song.ITS_NOT_UNUSUAL;
-		}
-		else if (((2.5 < ampZ) && (ampZ < 4.5)) && ((3 < avgZ) && (avgZ < 4)) && ((16 < pdZ) && (pdZ < 20))
-				&& ((ampZ < 1)) && ((16 < pdZ) && (pdZ < 20))
-				&& ((ampZ < 1)) && ((16 < pdZ) && (pdZ < 20)))
-		{
-			return Song.GANGNAM_STYLE;
-		} else {
+//		else if (((3.5 > middleZ) && (3.22 < middleZ)) && ((2.6 > ampZ) && (2.0 < ampZ)) && ((16 < freqZ) && (20 > freqZ))
+//				&& ((0.3 > middleX) && (0 < middleX)) && ((0.6 > ampX) && (0.3 < ampX)) && ((16 < freqX) && (20 > freqX))
+//				&& ((1.8 > middleY) && (1.2 < middleY)) && ((0.9 > ampY) && (0.5 < ampY)) && ((16 < freqY) && (20 > freqY)))
+//		{
+//			return Song.ITS_NOT_UNUSUAL;
+//		}
+//		else if (((3.5 > middleZ) && (3.22 < middleZ)) && ((2.6 > ampZ) && (2.0 < ampZ)) && ((16 < freqZ) && (20 > freqZ))
+//				&& ((0.3 > middleX) && (0 < middleX)) && ((0.6 > ampX) && (0.3 < ampX)) && ((16 < freqX) && (20 > freqX))
+//				&& ((1.8 > middleY) && (1.2 < middleY)) && ((0.9 > ampY) && (0.5 < ampY)) && ((16 < freqY) && (20 > freqY)))
+//		{
+//			return Song.GANGNAM_STYLE;
+//		} 
+		else {
 			return Song.NONE;
 		}
 
