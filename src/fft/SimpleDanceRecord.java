@@ -6,6 +6,7 @@ import java.util.Deque;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 //import edu.emory.mathcs.jtransforms.fft.DoubleFFT_1D;
 import edu.emory.mathcs.jtransforms.dct.DoubleDCT_1D;
@@ -19,82 +20,94 @@ import org.apache.commons.math3.stat.descriptive.moment.Mean;
  */
 public class SimpleDanceRecord {	
 	
-	private int window = 5 * 1000 / 40; // number of recent records we're interested in
-	public Deque<float[]> queue = new ArrayDeque<float[]>(); // timestamp
-	// TODO: change to 3 queues. or 3d array of queues.
+	private int window = 5 * 1000 / 40; // number of recent records we're interested in (5 secs)
 	
-	// stats
-	private StandardDeviation std = new StandardDeviation(); // or amplitude
-	private Mean mean = new Mean();
-	
+	public Deque<Float> zs = new ArrayDeque<Float>();
+	public Deque<Float> xs = new ArrayDeque<Float>();
+	public Deque<Float> ys = new ArrayDeque<Float>();
+
 	// for testing
-	public void setQueue(float[][] dq) {
-		int numCols = dq[0].length;
-		for (int i=0; i<numCols; i++) {
-			float zs = dq[0][i];
-			float xs = dq[1][i];
-			float ys = dq[2][i];
-			float[] point = new float[]{zs, xs, ys};
-			addPoint(point);
+	public void setQueue(float[] z, float[] x, float[] y) {
+		for (int i=0; i<z.length; i++) {
+			zs.add(z[i]);
+			xs.add(x[i]);
+			ys.add(y[i]);
 		}
 	}
+	
 	// for testing
 	public void addPoint(float[] pos) {
 		// add point to queue
-		queue.add(pos);
+		zs.add(pos[0]);
+		xs.add(pos[1]);
+		ys.add(pos[2]);
 		// trim old points from queue
-		if (queue.size() > window) {
-			queue.removeFirst();
-		}
-		// update stats
-		// TODO: not just for zs
-//		std.increment(pos[0]);
-//		mean.increment(pos[0]);
+		trimQueueIfNeeded(zs);
+		trimQueueIfNeeded(xs);
+		trimQueueIfNeeded(ys);
+	}
+	public void trimQueueIfNeeded(Deque<Float> q) {
+		if (q.size() > window) q.removeFirst();
 	}
 	
-	public double getStd() {
-		return std.getResult();
-	}
-//	public double getMean(int axis) {
-////		return mean.getResult();
-//		
-//		for (int i = 0; i < queue[axis].size(); i++) {
-//			
+//	public Stats {
+//		private middle;
+//		private amp;
+//		private freq;
+//		public Stats(double mid, double am, double fr) {
+//			middle = mid;
+//			amp = am;
+//			freq = fr;
 //		}
 //	}
-	
+	public double[] getStats(int axis) {
+		DescriptiveStatistics stats = new DescriptiveStatistics();
+		for (int i=0; i<zs.size(); i++) {
+			stats.addValue((new Float((float) zs.toArray()[axis])).doubleValue());
+		}
+		double[] statsArr = new double[3];
+		double amp = stats.getMax() - stats.getMin();
+		double middle = stats.getMin() + (amp / 2);
+		double freq = 0; // TODO: use fourier transform
+		
+		statsArr[0] = middle;
+		statsArr[1] = amp;
+		statsArr[2] = freq;
+//		Stats stats = new Stats(middle, amp, freq);
+		return statsArr;
+//		return stats;
+	}
+
 	/**
 	 * 
 	 * @param axis 0 for zs, 1 for xs, 2 for ys
 	 * @return
 	 */
-	public double[] getPositions(int axis) {
-//		float[][] pts = (float[][]) queue.toArray();
-//		List<Double> positions = Arrays.stream(pts).map(pt -> new Float(pt[axis]).doubleValue()).collect(Collectors.toList());
-//		double[] positionArray = ArrayUtils.toPrimitive(positions.toArray(new Double[positions.size()]));
-//		return positionArray;
-		Deque<float[]> localQueue = new ArrayDeque<float[]>(queue);
-		int size = localQueue.size();
+	public double[] getDataForAxis(int axis) {
+		Deque<Float> chosenDeque = new ArrayDeque<Float>(zs.size()); // assume zs, xs, ys all same size
+		if (axis == 0) {
+			chosenDeque.addAll(zs);
+		} else if (axis == 1) {
+			chosenDeque.addAll(xs);
+		} else {
+			chosenDeque.addAll(ys);
+		}
+		int size = chosenDeque.size();
 		double[] vals = new double[size];
-//		System.out.println("vals has size: " + vals.length);
 		for(int i=0; i<size; i++) {
-			vals[i] = new Float(localQueue.getFirst()[axis]).doubleValue();
-//			System.out.println("vals[" + i + "]: " + vals[i]);
-			localQueue.removeFirst();
+			vals[i] = new Float(chosenDeque.getFirst()).doubleValue();
+			chosenDeque.removeFirst();
 		}
 		return vals;
 	}
 	
-	public double[] getFreqencies(int axis) {
-//		DoubleFFT_1D fft = new DoubleFFT_1D(queue.size());
-		DoubleDCT_1D dct = new DoubleDCT_1D(queue.size());
-		System.out.println("dct:" + dct);
-		double[] vals = getPositions(axis);
-//		fft.realForward(vals);
-		dct.forward(vals, true);
-//		System.out.println("fft vals:" + vals);
+	public double getTopFreqency(int axis) {
+		DoubleDCT_1D dct = new DoubleDCT_1D(zs.size()); // assume zs, xs, ys all same size
+		double[] dataArr = null;
+		dataArr = getDataForAxis(axis);
+		dct.forward(dataArr, false);
 		// get period of max frequency found
-		return vals;
+		return dataArr[0];
 	}
 	
 }
