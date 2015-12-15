@@ -20,7 +20,6 @@ public class DanceRecord {
 			timestamp = ts;
 			position = pos;
 		}
-
 	}
 	
 	private Deque<Point> queue = new ArrayDeque<Point>(); // timestamp

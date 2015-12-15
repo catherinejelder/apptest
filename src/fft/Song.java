@@ -5,6 +5,9 @@ import java.util.Deque;
 
 public enum Song {
 	SINGLE_LADIES, ITS_NOT_UNUSUAL, GANGNAM_STYLE, NONE;
+	static double threshold = 0.1; // values must be within 10% of the canonical value
+	static double[] single_ladies_stats = {3.363, 2.379, 16.0, 0.1735, 0.4425, 12.0, 1.568, 0.7284, 16.0};
+
 //	double bpm;
 //	double beatsPerMove;
 //	Title title;
@@ -39,34 +42,22 @@ public enum Song {
 		double ampX = xStats[1];
 		double pdX = xStats[2];
 		double[] yStats = record.getStats(2);	
-		System.out.println("yStats: middle:" + yStats[0] + ", amp: " + yStats[1] + ", pd: " + yStats[2]);
+		System.out.println("yStats: middle:" + yStats[0] + ", amp: " + yStats[1] + ", pd: " + yStats[2] + "\n");
 		double middleY = yStats[0];
 		double ampY = yStats[1];
 		double pdY = yStats[2];
 		
-		if (((3.5 > middleZ) && (3.22 < middleZ)) && ((2.6 > ampZ) && (2.0 < ampZ)) && ((15 < pdZ) && (19 > pdZ))
-			&& ((0.3 > middleX) && (0 < middleX)) && ((0.6 > ampX) && (0.3 < ampX)) && ((11 < pdX) && (14 > pdX))
-			&& ((1.8 > middleY) && (1.2 < middleY)) && ((0.9 > ampY) && (0.5 < ampY)) && ((15 < pdY) && (19 > pdY)))
-		{
-			return Song.SINGLE_LADIES;
-		}	
-		// TODO: modify these
-//		else if (((3.5 > middleZ) && (3.22 < middleZ)) && ((2.6 > ampZ) && (2.0 < ampZ)) && ((16 < freqZ) && (20 > freqZ))
-//				&& ((0.3 > middleX) && (0 < middleX)) && ((0.6 > ampX) && (0.3 < ampX)) && ((16 < freqX) && (20 > freqX))
-//				&& ((1.8 > middleY) && (1.2 < middleY)) && ((0.9 > ampY) && (0.5 < ampY)) && ((16 < freqY) && (20 > freqY)))
-//		{
-//			return Song.ITS_NOT_UNUSUAL;
-//		}
-//		else if (((3.5 > middleZ) && (3.22 < middleZ)) && ((2.6 > ampZ) && (2.0 < ampZ)) && ((16 < freqZ) && (20 > freqZ))
-//				&& ((0.3 > middleX) && (0 < middleX)) && ((0.6 > ampX) && (0.3 < ampX)) && ((16 < freqX) && (20 > freqX))
-//				&& ((1.8 > middleY) && (1.2 < middleY)) && ((0.9 > ampY) && (0.5 < ampY)) && ((16 < freqY) && (20 > freqY)))
-//		{
-//			return Song.GANGNAM_STYLE;
-//		} 
-		else {
-			return Song.NONE;
+		double[] song_stats = {middleZ, ampZ, pdZ, middleX, ampX, pdX, middleY, ampY, pdY};
+		
+		for(int i=0; i<single_ladies_stats.length; i++) {
+			if (Math.abs(single_ladies_stats[i] - song_stats[i]) > threshold) {
+				break;
+			}
+			if (i == (single_ladies_stats.length - 1)) {
+				return Song.SINGLE_LADIES;
+			}
 		}
-
-
+		return Song.NONE;
+		// TODO: add more songs
 	}
 }
