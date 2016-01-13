@@ -11,7 +11,7 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
  */
 public class SimpleDanceRecord {	
 	
-	private int window = 5 * 1000 / 40; // number of recent records we're interested in (5 secs)
+	private int window = 3 * 1000 / 40; // number of recent records we're interested in
 	
 	public Deque<Float> zs = new ArrayDeque<Float>();
 	public Deque<Float> xs = new ArrayDeque<Float>();

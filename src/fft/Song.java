@@ -1,30 +1,22 @@
 package fft;
 
-import java.util.Arrays;
-import java.util.Deque;
-
 public enum Song {
 	SINGLE_LADIES, ITS_NOT_UNUSUAL, GANGNAM_STYLE, NONE;
 	static double threshold = 0.1; // values must be within 10% of the canonical value
+	// middle val, amplitude, and period for each axis (z, x, y)
 	static double[] single_ladies_stats = {3.363, 2.379, 16.0, 0.1735, 0.4425, 12.0, 1.568, 0.7284, 16.0};
-
+	static double[] gangnam_style_stats = {-1.449, 0.6748, 24.0, 0.8817, 0.5656, 10.0, -0.3990, 0.5268, 10.0};
+	
 //	double bpm;
 //	double beatsPerMove;
 //	Title title;
 	
-//	private Song(Title t) {
-//		this.title = t;
-//	}
-//	public enum Title {
-//		SINGLE_LADIES, ITS_NOT_UNUSUAL, GANGNAM_STYLE, NONE
-//	}
-
 //	public Song(int bPerMin, int beatsPerMove) {
 //		this.bpm = bPerMin;
 //		this.beatsPerMove = beatsPerMove;
 //	}
 	// an estimate of the "ideal" period of the song. number of samples we expect to see per dance move
-	public double getPeriod(double samplingFreq, double bpm, double beatsPerMove) {
+	public static double getPeriod(double samplingFreq, double bpm, double beatsPerMove) {
 		System.out.println("bpm: " + bpm + ", samplingFreq: " + samplingFreq + ", beatsPerMove: " + beatsPerMove);
 		return 1/(bpm/60/1000*samplingFreq/beatsPerMove);
 	}
@@ -49,6 +41,7 @@ public enum Song {
 		
 		double[] song_stats = {middleZ, ampZ, pdZ, middleX, ampX, pdX, middleY, ampY, pdY};
 		
+		// TODO: add more songs
 		for(int i=0; i<single_ladies_stats.length; i++) {
 			if (Math.abs(single_ladies_stats[i] - song_stats[i]) > threshold) {
 				break;
@@ -58,6 +51,5 @@ public enum Song {
 			}
 		}
 		return Song.NONE;
-		// TODO: add more songs
 	}
 }
