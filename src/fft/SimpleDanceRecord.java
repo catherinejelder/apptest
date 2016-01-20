@@ -11,47 +11,36 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
  */
 public class SimpleDanceRecord {	
 	
-	private int window = 3 * 1000 / 40; // number of recent records we're interested in
+	private int window = 3 * 1000 / 40; // number of recent records we're interested in (3 seconds)
 	
-	public Deque<Float> zs = new ArrayDeque<Float>();
-	public Deque<Float> xs = new ArrayDeque<Float>();
-	public Deque<Float> ys = new ArrayDeque<Float>();
-
-	// for testing
-	public void setQueue(float[] z, float[] x, float[] y) {
-		for (int i=0; i<z.length; i++) {
-			zs.add(z[i]);
-			xs.add(x[i]);
-			ys.add(y[i]);
+	public Deque<Float> zs = new ArrayDeque<>();
+	public Deque<Float> xs = new ArrayDeque<>();
+	public Deque<Float> ys = new ArrayDeque<>();
+	
+	public Song isSong() {
+		for(Song s: Song.values()) {
+			if (s.stats != null) {
+				if (s.stats.isEquivalentTo(this.getStats())) {
+					return s;
+				}
+			}
 		}
+		return Song.NONE;
 	}
 	
-	// for testing
-	public void addPoint(float[] pos) {
-		// add point to queue
-		zs.add(pos[0]);
-		xs.add(pos[1]);
-		ys.add(pos[2]);
-		// trim old points from queue
-		trimQueueIfNeeded(zs);
-		trimQueueIfNeeded(xs);
-		trimQueueIfNeeded(ys);
-	}
-	public void trimQueueIfNeeded(Deque<Float> q) {
-		if (q.size() > window) q.removeFirst();
+	public Stats getStats() {
+		double[] zStats = getStatsForAxis(0);
+		double[] xStats = getStatsForAxis(1);
+		double[] yStats = getStatsForAxis(2);
+		SingleAxisStats zS = new SingleAxisStats(zStats[0], zStats[1], zStats[2]);
+		SingleAxisStats xS = new SingleAxisStats(xStats[0], xStats[1], xStats[2]);
+		SingleAxisStats yS = new SingleAxisStats(yStats[0], yStats[1], yStats[2]);
+		Stats stats = new Stats(zS, xS, yS);
+		return stats;
 	}
 	
-//	public Stats {
-//		private middle;
-//		private amp;
-//		private freq;
-//		public Stats(double mid, double am, double fr) {
-//			middle = mid;
-//			amp = am;
-//			freq = fr;
-//		}
-//	}
-	public double[] getStats(int axis) {
+	// TODO: refactor this!
+	private double[] getStatsForAxis(int axis) {
 		DescriptiveStatistics stats = new DescriptiveStatistics();
 		Deque<Float> targetArr;
 		if (axis == 0){
@@ -66,7 +55,6 @@ public class SimpleDanceRecord {
 		}
 		double[] statsArr = new double[3];
 		double amp = stats.getMax() - stats.getMin();
-//		System.out.println("stats: max:" + stats.getMax() + ", min: " + stats.getMin());
 		double middle = stats.getMin() + (amp / 2);
 //		double freq = getTopFrequency(axis); // TODO: use fourier transform
 		double pd = 2 * (targetArr.size() / getNumMiddleCrossings(targetArr, middle));
@@ -74,7 +62,7 @@ public class SimpleDanceRecord {
 		statsArr[0] = middle;
 		statsArr[1] = amp;
 		statsArr[2] = pd;
-//		Stats stats = new Stats(middle, amp, freq);
+		
 		return statsArr;
 	}
 
@@ -88,6 +76,30 @@ public class SimpleDanceRecord {
 		}
 		return numCrossings;
 	}
+	// for testing
+	public void setQueue(float[] z, float[] x, float[] y) {
+		for (int i=0; i<z.length; i++) {
+			zs.add(z[i]);
+			xs.add(x[i]);
+			ys.add(y[i]);
+		}
+	}
+	
+	public void addPoint(float[] pos) {
+		// add point to queue
+		zs.add(pos[0]);
+		xs.add(pos[1]);
+		ys.add(pos[2]);
+		// trim old points from queue
+		trimQueueIfNeeded(zs);
+		trimQueueIfNeeded(xs);
+		trimQueueIfNeeded(ys);
+	}
+	
+	public void trimQueueIfNeeded(Deque<Float> q) {
+		if (q.size() > window) q.removeFirst();
+	}
+	
 //	/**
 //	 * 
 //	 * @param axis 0 for zs, 1 for xs, 2 for ys
@@ -119,5 +131,4 @@ public class SimpleDanceRecord {
 //		// get period of max frequency found
 //		return dataArr[0];
 //	}
-	
 }
