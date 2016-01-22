@@ -6,7 +6,11 @@ public enum Song {
 //	GANGNAM_STYLE(new Stats(new SingleAxisStats(3.14, 0.6748, 24.0), new SingleAxisStats(0.8817, 0.5656, 10.0), new SingleAxisStats(-0.3990, 0.5268, 10.0))), 
 //	SINGLE_LADIES(new Stats(new SingleAxisStats(3.363, 2.379, 16.0), new SingleAxisStats(0.1735, 0.4425, 12.0), new SingleAxisStats(1.568, 0.7284, 16.0))),
 //	GANGNAM_STYLE(new Stats(new SingleAxisStats(3.14, 0.6748, 24.0), new SingleAxisStats(0.8817, 0.5656, 10.0), new SingleAxisStats(-0.3990, 0.5268, 10.0))), 
-	GANGNAM_STYLE(new StatRange(new SingleAxisStatRange(-2.50, 2.80, 0.400, 0.770, 8.0, 16.5), new SingleAxisStatRange(0.6, 0.91, 0.42, 0.71, 7, 13), new SingleAxisStatRange(0.62, 0.91, 0.42, 0.71, 7, 11))),
+	
+//	GANGNAM_STYLE(new StatRange(new SingleAxisStatRange(-2.50, 2.80, 0.400, 0.770, 8.0, 16.5), new SingleAxisStatRange(0.6, 0.91, 0.42, 0.71, 7, 13), new SingleAxisStatRange(0.62, 0.91, 0.42, 0.71, 7, 11))),
+//	GANGNAM_STYLE(new StatRange(new SingleAxisStatRange(-2.50, 2.80, 0.39, 0.770, 5.9, 32.5), new SingleAxisStatRange(0.5, 0.92, 0.25, 0.71, 5.9, 13), new SingleAxisStatRange(-0.82, -0.368, 0.38, 0.71, 5, 14.1))),
+	GANGNAM_STYLE(new StatRange(new SingleAxisStatRange(-2.50, 2.80, 0.39, 0.770, 5.9, 32.5), new SingleAxisStatRange(0.5, 0.92, 0.25, 0.71, 5.9, 13), new SingleAxisStatRange(-0.82, -0.368, 0.38, 0.71, 5, 14.1))),
+
 	NONE(null);
 	
 	StatRange statRange;
