@@ -1,9 +1,12 @@
 package fft;
 
 public class SingleAxisStats {
-	double middle; // average value
-	double amplitude; // max - min
-	double period; // number of samples in one cycle
+	// average value
+	double middle;
+	// max - min
+	double amplitude;
+	// number of samples in one cycle
+	double period;
 	
 	public SingleAxisStats(double middle, double amplitude, double period) {
 		this.middle = middle;

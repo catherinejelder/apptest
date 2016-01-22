@@ -19,8 +19,8 @@ public class SimpleDanceRecord {
 	
 	public Song isSong() {
 		for(Song s: Song.values()) {
-			if (s.stats != null) {
-				if (s.stats.isEquivalentTo(this.getStats())) {
+			if (s.statRange != null) {
+				if (s.statRange.matches(this.getStats())) {
 					return s;
 				}
 			}
